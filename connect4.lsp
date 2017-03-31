@@ -8,7 +8,7 @@
 						0 0 0 0 0 0 0
 						0 0 0 0 0 0 0
 						0 0 0 0 0 0 0
-						0 0 0 0 0 0 0)) ; maybe one extra will make it not nil ... 
+						0 0 0 0 0 0 0))
 
 ; edit to print-board - adding loop
 (defun print-row(row)
@@ -44,6 +44,27 @@
 	(format t "~%")
 )
 
+; see if a player has won
+(defun test-win()
+	; test horizontal wins for player 1
+	(let(result)
+		(setf result 0)
+    	(loop for x from 0 to 3
+			do(
+					loop for y from 0 to 5
+						do()
+						when  ( and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 1)
+				        		      (equal (nth (+ (* 7 y) (+ x 1)) *board*) 1)
+				    	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 1)
+					          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 1) )
+								do (setf result 1)
+					
+			)
+	    ) ; end of test horizontal wins for player 1
+		(return result)
+	)
+)
+
 ; *row* to be replaced with 'falling' function
 ; in a single list, row/column is calculated through (row*width + colummn)
 ; player is either a 1 or 2
@@ -62,18 +83,6 @@
 	)
 )
 						
-; see what it looks like printed out			
-;(print-board)
-;(format t "~%")
-;(place-piece 1 0)
-
-;(print-board)
-;(format t "~%")
-
-;(place-piece 2 0)
-;(print-rowLocs)
-
-;(print-board)
 
 ; the main game loop
 (format t "Welcome to Connect 4!~%~%")
@@ -91,6 +100,12 @@
 			)
 		)
 		(t (format t "Enter a column from 0 to 6 or q to quit!~%"))
+	)
+	(if (eq (test-win) 1)
+	  (let()
+	  	(format t "Player 1 Wins!~%")
+		(setf *player-enter* -1) ; make the game exit
+	  )
 	)
 	(when (equal *player-enter* -1) (return 0))
 )
