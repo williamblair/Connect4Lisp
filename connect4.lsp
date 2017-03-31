@@ -1,5 +1,5 @@
-; testing to see how much I can do with my
-; current knowledge for AI
+; Skeleton for connect 4 lisp
+; William (BJ) Blair
 ; 03/21/17
 
 ; the board - 0 means open, 1 means player 1, 2 means player 2
@@ -44,8 +44,8 @@
 	(format t "~%")
 )
 
-; see if a player has won
-(defun test-win()
+; see if player 1 has won
+(defun test-player1-win-horizontal()
 	; test horizontal wins for player 1
 	(let()
     	(loop for x from 0 to 3
@@ -57,11 +57,32 @@
 				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 1)
 				          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 1) )
 							;(setf result 1)
-							(return-from test-win t)
+							(return-from test-player1-win-horizontal t)
 					)
 			)
 	    ) ; end of test horizontal wins for player 1
-		(return-from test-win nil)
+		(return-from test-player1-win-horizontal nil)
+	)
+)
+
+; see if player 2 has won
+(defun test-player2-win-horizontal()
+	; test horizontal wins for player 1
+	(let()
+    	(loop for x from 0 to 3
+			do(
+				loop for y from 0 to 5
+					do(
+						if ( and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 2)
+				       		      (equal (nth (+ (* 7 y) (+ x 1)) *board*) 2)
+				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 2)
+				          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 2) )
+							;(setf result 1)
+							(return-from test-player2-win-horizontal t)
+					)
+			)
+	    ) ; end of test horizontal wins for player 2
+		(return-from test-player2-win-horizontal nil)
 	)
 )
 
@@ -95,17 +116,26 @@
 		((equal *player-enter* -1) (return 0))
 		((> *player-enter* -1) 
 			(if (< *player-enter* 7)
-				(place-piece 1 *player-enter*)
+				;(place-piece 1 *player-enter*)
+				(place-piece 2 *player-enter*) ; edited to player 2 for win testing
 				(format t "Enter a column from 0 to 6 or q to quit!~%")
 			)
 		)
 		(t (format t "Enter a column from 0 to 6 or q to quit!~%"))
 	)
-	(if (eq (test-win) t)
+	; test player 1 for wins
+	(if (eq (test-player1-win-horizontal) t)
 	  (let()
 		(print-board)
-		(print-board)
 	  	(format t "Player 1 Wins!~%")
+		(setf *player-enter* -1) ; make the game exit
+	  )
+	)
+	; test player 2 for wins
+	(if (eq (test-player2-win-horizontal) t)
+	  (let()
+		(print-board)
+	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
 	  )
 	)
