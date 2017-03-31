@@ -47,21 +47,21 @@
 ; see if a player has won
 (defun test-win()
 	; test horizontal wins for player 1
-	(let(result)
-		(setf result 0)
+	(let()
     	(loop for x from 0 to 3
 			do(
-					loop for y from 0 to 5
-						do()
-						when  ( and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 1)
-				        		      (equal (nth (+ (* 7 y) (+ x 1)) *board*) 1)
-				    	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 1)
-					          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 1) )
-								do (setf result 1)
-					
+				loop for y from 0 to 5
+					do(
+						if ( and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 1)
+				       		      (equal (nth (+ (* 7 y) (+ x 1)) *board*) 1)
+				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 1)
+				          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 1) )
+							;(setf result 1)
+							(return-from test-win t)
+					)
 			)
 	    ) ; end of test horizontal wins for player 1
-		(return result)
+		(return-from test-win nil)
 	)
 )
 
@@ -101,8 +101,10 @@
 		)
 		(t (format t "Enter a column from 0 to 6 or q to quit!~%"))
 	)
-	(if (eq (test-win) 1)
+	(if (eq (test-win) t)
 	  (let()
+		(print-board)
+		(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
 	  )
