@@ -65,6 +65,42 @@
 	)
 )
 
+; see if player 1 has won
+(defun test-player1-win-diagonal()
+	; test diagonal wins for player 1
+	(let()
+    	(loop for x from 0 to 3
+			do(
+				loop for y from 0 to 2
+					do(
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) 1)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) 1)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) 1)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) 1) )
+							;(setf result 1)
+							(return-from test-player1-win-diagonal t)
+					)
+			)
+	    ) ; end of first loop diagonal for player 1
+    	(loop for x from 6 to 3
+			do(
+				loop for y from 0 to 2
+					do(
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) 1)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) 1)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) 1)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) 1) )
+							;(setf result 1)
+							(return-from test-player1-win-diagonal t)
+					)
+			)
+	    ) ; end of second loop diagonal for player 1
+
+		; if either neither test returned true then return false
+		(return-from test-player1-win-diagonal nil)
+	)
+)
+
 (defun test-player1-win-vertical()
 	; test vertical wins for player 1
 	(let()
@@ -85,6 +121,7 @@
 	)
 )
 
+
 ; see if player 2 has won
 (defun test-player2-win-horizontal()
 	; test horizontal wins for player 1
@@ -103,6 +140,62 @@
 			)
 	    ) ; end of test horizontal wins for player 2
 		(return-from test-player2-win-horizontal nil)
+	)
+)
+
+(defun test-player2-win-vertical()
+	; test vertical wins for player 2
+	(let()
+    	(loop for x from 0 to 6
+			do(
+				loop for y from 0 to 2
+					do(
+						if ( and (equal (nth (+ (* 7 (+ y 0)) x) *board*) 2)
+				       		      (equal (nth (+ (* 7 (+ y 1)) x) *board*) 2)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) x) *board*) 2)
+				          	      (equal (nth (+ (* 7 (+ y 3)) x) *board*) 2) )
+							;(setf result 1)
+							(return-from test-player2-win-vertical t)
+					)
+			)
+	    ) ; end of test vertical wins for player 2
+		(return-from test-player2-win-vertical nil)
+	)
+)
+
+; see if player 2 has won
+(defun test-player2-win-diagonal()
+	; test diagonal wins for player 2
+	(let()
+    	(loop for x from 0 to 3
+			do(
+				loop for y from 0 to 2
+					do(
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) 2)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) 2)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) 2)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) 2) )
+							;(setf result 1)
+							(return-from test-player2-win-diagonal t)
+					)
+			)
+	    ) ; end of first loop diagonal for player 1
+    	(loop for x from 6 to 3
+			do(
+				loop for y from 0 to 2
+					do(
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) 2)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) 2)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) 2)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) 2) )
+							;(setf result 1)
+							(return-from test-player2-win-diagonal t)
+					)
+			)
+	    ) ; end of second loop diagonal for player 2
+
+		; if either neither test returned true then return false
+		(return-from test-player2-win-diagonal nil)
 	)
 )
 
@@ -136,8 +229,8 @@
 		((equal *player-enter* -1) (return 0))
 		((> *player-enter* -1) 
 			(if (< *player-enter* 7)
-				(place-piece 1 *player-enter*)
-				;(place-piece 2 *player-enter*) ; edited to player 2 for win testing
+				;(place-piece 1 *player-enter*)
+				(place-piece 2 *player-enter*) ; edited to player 2 for win testing
 				(format t "Enter a column from 0 to 6 or q to quit!~%")
 			)
 		)
@@ -158,8 +251,29 @@
 		(setf *player-enter* -1) ; make the game exit
 	  )
 	)
+	(if (eq (test-player1-win-diagonal) t)
+	  (let()
+		(print-board)
+	  	(format t "Player 1 Wins!~%")
+		(setf *player-enter* -1) ; make the game exit
+	  )
+	)
 	; test player 2 for wins
 	(if (eq (test-player2-win-horizontal) t)
+	  (let()
+		(print-board)
+	  	(format t "Player 2 Wins!~%")
+		(setf *player-enter* -1) ; make the game exit
+	  )
+	)
+	(if (eq (test-player2-win-vertical) t)
+	  (let()
+		(print-board)
+	  	(format t "Player 2 Wins!~%")
+		(setf *player-enter* -1) ; make the game exit
+	  )
+	)
+	(if (eq (test-player2-win-diagonal) t)
 	  (let()
 		(print-board)
 	  	(format t "Player 2 Wins!~%")
