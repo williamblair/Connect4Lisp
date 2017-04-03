@@ -82,7 +82,7 @@
 					)
 			)
 	    ) ; end of first loop diagonal for player 1
-    	(loop for x from 6 to 3
+    	(loop for x from 6 downto 3
 			do(
 				loop for y from 0 to 2
 					do(
@@ -180,7 +180,7 @@
 					)
 			)
 	    ) ; end of first loop diagonal for player 1
-    	(loop for x from 6 to 3
+    	(loop for x from 6 downto 3
 			do(
 				loop for y from 0 to 2
 					do(
@@ -216,26 +216,51 @@
 		)
 	)
 )
+
+; *row* to be replaced with 'falling' function
+; in a single list, row/column is calculated through (row*width + colummn)
+; player is either a 1 or 2
+(defun place-piece-debug(player row column)
+	;board[7*rowLocs[column]+column] = player;
+	;basically board[row][column] = player
+	(setf (nth (+ (* 7 row) column) *board*) player)
+	; rowLocs[column] -= 1
+	;(setf (nth column *rowLocs*) (- (nth column *rowLocs*) 1))
+)
 						
 
 ; the main game loop
 (format t "Welcome to Connect 4!~%~%")
-(defparameter *player-enter* -1)
+(defparameter *player-enter* 0)
+(defparameter *player-row* -1)
+(defparameter *player-col* -1)
 (loop
 	(print-board)
+	;(format t "Enter a column to enter (or -1 to quit) >")
+	(format t "Enter a row to enter (or -1 to quit) >")
+	;(setf *player-enter* (read))
+	(setf *player-row* (read))
 	(format t "Enter a column to enter (or -1 to quit) >")
-	(setf *player-enter* (read))
-	(cond 
-		((equal *player-enter* -1) (return 0))
-		((> *player-enter* -1) 
-			(if (< *player-enter* 7)
+	(setf *player-col* (read))
+	;(cond 
+		;((equal *player-enter* -1) (return 0))
+		;((> *player-enter* -1) 
+		;	(if (< *player-enter* 7)
 				;(place-piece 1 *player-enter*)
-				(place-piece 2 *player-enter*) ; edited to player 2 for win testing
-				(format t "Enter a column from 0 to 6 or q to quit!~%")
-			)
-		)
-		(t (format t "Enter a column from 0 to 6 or q to quit!~%"))
-	)
+				;(place-piece 2 *player-enter*) ; edited to player 2 for win testing
+				;(format t "Enter a column from 0 to 6 or q to quit!~%")
+		;	)
+		;)
+	;	(t (format t "Enter a column from 0 to 6 or q to quit!~%"))
+	;)
+
+	;;;;;;;;;;;; DEBUG ;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; place a piece using the debug placement ;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;(place-piece-debug 1 *player-row* *player-col*)
+	(place-piece-debug 2 *player-row* *player-col*)
+
+
 	; test player 1 for wins
 	(if (eq (test-player1-win-horizontal) t)
 	  (let()
