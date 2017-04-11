@@ -406,13 +406,15 @@
 			loop for y from (nth (+ x 3) *rowLocs*) to 5
 				do(
 					let()
-						(format t "x+0=~a x+1=~a x+2=~a x+3=~a rowLocs[x+3]=~a ~%" 
-							(nth (+ (* 7 y)(+ x 0)) *board*)
-							(nth (+ (* 7 y)(+ x 1)) *board*)
-							(nth (+ (* 7 y)(+ x 2)) *board*)
-							(nth (+ (* 7 y)(+ x 3)) *board*)
-							(nth (+ x 3) *rowLocs*)
-						)
+						;(format t "x+0=~a x+1=~a x+2=~a x+3=~a rowLocs[x+3]=~a ~%" 
+						;	(nth (+ (* 7 y)(+ x 0)) *board*)
+						;	(nth (+ (* 7 y)(+ x 1)) *board*)
+						;	(nth (+ (* 7 y)(+ x 2)) *board*)
+						;	(nth (+ (* 7 y)(+ x 3)) *board*)
+						;	(nth (+ x 3) *rowLocs*)
+						;)
+
+						; basic 3 in a row - fourth spot empty (2 2 2 x)
 						(when (and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 2)
 						        (equal (nth (+ (* 7 y) (+ x 1)) *board*) 2)
 						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) 2)
@@ -423,10 +425,191 @@
 								; false
 								;(return-from check-winning-moves -1)
 						)
-					  
+
+						; first loc empty (x 2 2 2)
+						(when (and (equal (nth (+ (* 7 y) (+ x 1)) *board*) 2)
+						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) 2)
+						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) 2)
+								(equal (nth (+ x 0) *rowLocs*) y))
+					
+					        	;true
+						        (return-from check-winning-moves (+ x 0))
+								; false
+								;(return-from check-winning-moves -1)
+						)
+
+						; second loc empty (2 x 2 2)
+						(when (and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 2)
+						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) 2)
+						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) 2)
+								(equal (nth (+ x 1) *rowLocs*) y))
+					
+					        	;true
+						        (return-from check-winning-moves (+ x 1))
+								; false
+								;(return-from check-winning-moves -1)
+						)
+
+						; third loc empty (2 2 x 2)
+						(when (and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 2)
+						        (equal (nth (+ (* 7 y) (+ x 1)) *board*) 2)
+						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) 2)
+								(equal (nth (+ x 2) *rowLocs*) y))
+					
+					        	;true
+						        (return-from check-winning-moves (+ x 2))
+								; false
+								;(return-from check-winning-moves -1)
+						)
 				)
 		)
 	)
+
+	; test vertically
+	(loop for x from 0 to 6
+		do(
+			loop for y from 0 to 2
+				do(
+					let()
+						(when 
+							(and
+								; the three y positions below our current = 2
+								(equal (nth (+ (* 7 (+ y 3)) x) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 2)) x) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 1)) x) *board*) 2)
+								; the current y position is empty
+								(equal (nth (+ (* 7 (+ y 0)) x) *board*) 0)
+							)
+							(return-from check-winning-moves x)
+						)
+				)
+		)
+	)
+
+	; check diagonally (left to right downwards)
+	(loop for x from 0 to 3
+		do(
+			loop for y from 0 to 2
+				do(
+					let()
+
+						; three in a row diagonal to the left (2 2 2 x)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (+ x 3) *rowLocs*) (+ y 3))
+							)
+							(return-from check-winning-moves (+ x 3))
+						)
+
+						; three in a row diagonal to the left (x 2 2 2)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (+ x 0) *rowLocs*) (+ y 0))
+							)
+							(return-from check-winning-moves (+ x 0))
+						)
+
+						; three in a row diagonal to the left (2 x 2 2)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (+ x 1) *rowLocs*) (+ y 1))
+							)
+							(return-from check-winning-moves (+ x 1))
+						)
+
+						; three in a row diagonal to the left (2 2 x 2)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (+ x 2) *rowLocs*) (+ y 2))
+							)
+							(return-from check-winning-moves (+ x 2))
+						)
+				)
+		)
+	)
+
+	; check diagonally (right to left downwards)
+	(loop for x from 6 downto 3
+		do(
+			loop for y from 0 to 2
+				do(
+					let()
+
+						; three in a row diagonal to the left (2 2 2 x)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (- x 0) *rowLocs*) (+ y 0))
+							)
+							(return-from check-winning-moves (- x 0))
+						)
+
+						; three in a row diagonal to the left (2 x 2 2)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (- x 2) *rowLocs*) (+ y 2))
+							)
+							(return-from check-winning-moves (- x 2))
+						)
+
+						; three in a row diagonal to the left (2 2 x 2)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (- x 1) *rowLocs*) (+ y 1))
+							)
+							(return-from check-winning-moves (- x 1))
+						)
+
+						; three in a row diagonal to the left (x 2 2 2)
+						(when 
+							(and
+								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) 2)
+								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) 2)
+								; and the next space down to the right is the next piece
+								; to be played in that column
+								(equal (nth (- x 3) *rowLocs*) (+ y 3))
+							)
+							(return-from check-winning-moves (- x 3))
+						)
+				)
+		)
+	)
+	
 
 	; if no winning moves, return -1
 	-1
@@ -436,7 +619,7 @@
 (defun player2-turn()
 
 	; check for a winning move; if so take it
-	(format t "check winning moves = ~a ~%" (check-winning-moves))
+	;(format t "check winning moves = ~a ~%" (check-winning-moves))
 	(setf *player2-col* (check-winning-moves))
 	(if (not (equal *player2-col* -1))
 		(let()
