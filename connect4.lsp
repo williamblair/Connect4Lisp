@@ -238,6 +238,7 @@
 		(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(return-from check-wins t) ; exit this loop
 	  )
 	)
 	(if (eq (test-player1-win-vertical) t)
@@ -245,6 +246,7 @@
 		(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(return-from check-wins t) ; exit this loop
 	  )
 	)
 	(if (eq (test-player1-win-diagonal) t)
@@ -252,6 +254,7 @@
 		(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(return-from check-wins t) ; exit this loop
 	  )
 	)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -264,6 +267,7 @@
 		(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(return-from check-wins t) ; exit this loop
 	  )
 	)
 	(if (eq (test-player2-win-vertical) t)
@@ -271,6 +275,7 @@
 		(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(return-from check-wins t) ; exit this loop
 	  )
 	)
 	(if (eq (test-player2-win-diagonal) t)
@@ -278,10 +283,13 @@
 		(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(return-from check-wins t) ; exit this loop
 	  )
 	)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	nil ; return false if no wins
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -639,7 +647,7 @@
 		;)
 
 		; otherwise just place a piece randomly
-		; (place-piece 2 (random 7))
+		(place-piece 2 (random 7))
 )
 						
 ;;;;;;;;;;;;;;;;; MAIN LOOP ;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -649,39 +657,39 @@
 (format t "Welcome to Connect 4!~%~%")
 (loop
 	(print-board)
-	;(format t "Enter a column to enter (or -1 to quit) >")
-	(format t "Enter a col to enter (or -1 to quit) >")
-	;(setf *player-enter* (read))
-	(setf *player-col* (read))
-	(format t "Enter a row to enter (or -1 to quit) >")
-	(setf *player-row* (read))
-	;(cond 
-	;	((equal *player-enter* -1) (return 0))
-	;	((> *player-enter* -1) 
-	;		(if (< *player-enter* 7)
-	;			(place-piece 1 *player-enter*)
-	;			;(place-piece 2 *player-enter*) ; edited to player 2 for win testing
-	;			;(format t "Enter a column from 0 to 6 or q to quit!~%")
-	;		)
-	;	)
-	;	(t (format t "Enter a column from 0 to 6 or q to quit!~%"))
-	;)
+	(format t "Enter a column to enter (or -1 to quit) >")
+	;(format t "Enter a col to enter (or -1 to quit) >")
+	(setf *player-enter* (read))
+	;(setf *player-col* (read))
+	;(format t "Enter a row to enter (or -1 to quit) >")
+	;(setf *player-row* (read))
+	(cond 
+		((equal *player-enter* -1) (return 0))
+		((> *player-enter* -1) 
+			(if (< *player-enter* 7)
+				(place-piece 1 *player-enter*)
+				;(place-piece 2 *player-enter*) ; edited to player 2 for win testing
+				;(format t "Enter a column from 0 to 6 or q to quit!~%")
+			)
+		)
+		(t (format t "Enter a column from 0 to 6 or q to quit!~%"))
+	)
 
 	;;;;;;;;;;;; DEBUG ;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; place a piece using the debug placement ;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;(place-piece-debug 1 *player-row* *player-col*)
-	(place-piece-debug 2 *player-row* *player-col*)
+	;(place-piece-debug 2 *player-row* *player-col*)
 
 	; checks for horizontal, vertical, and diagonal wins
 	; on players 1 and 2
-	(check-wins)
+	(when (check-wins) (return 0))
 
 	; now its player two's turn - the agent
 	(player2-turn)
 
 	; recheck wins to see if player2 had a winning move
-	(check-wins)
+	(when (check-wins) (return 0))
 
 	; exit if the player enters a -1
 	(when (equal *player-enter* -1) (return 0))
