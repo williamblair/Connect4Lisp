@@ -322,7 +322,7 @@
 	(setf (nth (+ (* 7 row) column) *board*) player)
 	(setf (nth column *rowLocs*) (- (nth column *rowLocs*) 1))
 	; rowLocs[column] -= 1
-	;(setf (nth column *rowLocs*) (- (nth column *rowLocs*) 1))
+	(setf (nth column *rowLocs*) (- row 1))
 )
 
 
@@ -411,7 +411,9 @@
 	; test horizontally
 	(loop for x from 0 to 3
 		do(
-			loop for y from (nth (+ x 3) *rowLocs*) to 5
+			let()
+			;(format t "before nth in rowlocs in check winning moves ~%")
+			(loop for y from (nth (+ x 3) *rowLocs*) to 5
 				do(
 					let()
 						;(format t "x+0=~a x+1=~a x+2=~a x+3=~a rowLocs[x+3]=~a ~%" 
@@ -423,7 +425,10 @@
 						;)
 
 						; basic 3 in a row - fourth spot empty (2 2 2 x)
-						(when (and (equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
+						;(format t "before when 1 in check winning moves ~%")
+						;(format t "X = ~a  Y = ~a ~%" x y)
+						(when (and (> y -1)
+								(equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 1)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) player)
 								(equal (nth (+ x 3) *rowLocs*) y))
@@ -435,7 +440,9 @@
 						)
 
 						; first loc empty (x 2 2 2)
-						(when (and (equal (nth (+ (* 7 y) (+ x 1)) *board*) player)
+						;(format t "before when 2 in check winning moves ~%")
+						(when (and (> y -1)
+								(equal (nth (+ (* 7 y) (+ x 1)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) player)
 								(equal (nth (+ x 0) *rowLocs*) y))
@@ -447,7 +454,9 @@
 						)
 
 						; second loc empty (2 x 2 2)
-						(when (and (equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
+						;(format t "before when 3 in check winning moves ~%")
+						(when (and (> y -1) 
+								(equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) player)
 								(equal (nth (+ x 1) *rowLocs*) y))
@@ -459,7 +468,9 @@
 						)
 
 						; third loc empty (2 2 x 2)
-						(when (and (equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
+						;(format t "before when 4 in check winning moves ~%")
+						(when (and (> y -1)
+								(equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 1)) *board*) player)
 						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) player)
 								(equal (nth (+ x 2) *rowLocs*) y))
@@ -470,6 +481,7 @@
 								;(return-from check-winning-moves -1)
 						)
 				)
+			)
 		)
 	)
 
@@ -479,8 +491,9 @@
 			loop for y from 0 to 2
 				do(
 					let()
+						;(format t "before test vertically and in check-winning-move ~%")
 						(when 
-							(and
+							(and (> y -1)
 								; the three y positions below our current = 2
 								(equal (nth (+ (* 7 (+ y 3)) x) *board*) player)
 								(equal (nth (+ (* 7 (+ y 2)) x) *board*) player)
@@ -500,10 +513,10 @@
 			loop for y from 0 to 2
 				do(
 					let()
-
+						;(format t "before check diagonally in check-winning-move ~%")
 						; three in a row diagonal to the left (2 2 2 x)
 						(when 
-							(and
+							(and (> y -1)
 								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) player)
@@ -515,8 +528,9 @@
 						)
 
 						; three in a row diagonal to the left (x 2 2 2)
+						;(format t "in check diagonally in check-winning-move ~%")
 						(when 
-							(and
+							(and (> y -1)
 								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) player)
@@ -528,8 +542,9 @@
 						)
 
 						; three in a row diagonal to the left (2 x 2 2)
+						;(format t "in check diagonally in 2 check-winning-move ~%")
 						(when 
-							(and
+							(and (> y -1)
 								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) player)
@@ -541,8 +556,9 @@
 						)
 
 						; three in a row diagonal to the left (2 2 x 2)
+						;(format t "in check diagonally in 3 check-winning-move ~%")
 						(when 
-							(and
+							(and (> y -1)
 								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) player)
 								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) player)
@@ -564,6 +580,7 @@
 					let()
 
 						; three in a row diagonal to the left (2 2 2 x)
+						;(format t "in check diagonally in 4 check-winning-move ~%")
 						(when 
 							(and
 								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) player)
@@ -577,6 +594,7 @@
 						)
 
 						; three in a row diagonal to the left (2 x 2 2)
+						;(format t "in check diagonally in 5 check-winning-move ~%")
 						(when 
 							(and
 								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) player)
@@ -590,6 +608,7 @@
 						)
 
 						; three in a row diagonal to the left (2 2 x 2)
+						;(format t "in check diagonally in 6 check-winning-move ~%")
 						(when 
 							(and
 								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) player)
@@ -603,6 +622,7 @@
 						)
 
 						; three in a row diagonal to the left (x 2 2 2)
+						;(format t "in check diagonally in 7 check-winning-move ~%")
 						(when 
 							(and
 								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) player)
@@ -627,10 +647,11 @@
 (defun player2-turn()
 
 	; check for a winning move; if so take it
-	;(format t "check winning moves = ~a ~%" (check-winning-moves))
+	;(format t "before check winning moves in player 2 turn ~%")
 	(setf *player2-col* (check-winning-moves 2))
 	(if (not (equal *player2-col* -1))
 		(let()
+			;(format t "before place piece player 2 ~%")
 			(place-piece 2 *player2-col*)
 			(return-from player2-turn 0)
 		)
@@ -638,9 +659,11 @@
 
 	; check for a winning move for player 1; if so block it
 	;(format t "check winning moves = ~a ~%" (check-winning-moves))
+	;(format t "before check winning moves again in player 2 turn ~%")
 	(setf *player2-col* (check-winning-moves 1))
 	(if (not (equal *player2-col* -1))
 		(let()
+			;(format t "before place piece again in player 2 turn ~%")
 			(place-piece 2 *player2-col*)
 			(return-from player2-turn 0)
 		)
@@ -657,7 +680,8 @@
 		;)
 
 		; otherwise just place a piece randomly
-		;(place-piece 2 (random 7))
+		;(format t "before place piece random ~%")
+		(place-piece 2 (random 7))
 )
 						
 ;;;;;;;;;;;;;;;;; MAIN LOOP ;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -673,11 +697,15 @@
 	;(setf *player-col* (read))
 	;(format t "Enter a row to enter (or -1 to quit) >")
 	;(setf *player-row* (read))
+	;(format t "before cond in main~%")
 	(cond 
 		((equal *player-enter* -1) (return 0))
 		((> *player-enter* -1) 
 			(if (< *player-enter* 7)
-				(place-piece 1 *player-enter*)
+				(let()
+					;(format t "before place piece in main~%")
+					(place-piece 1 *player-enter*)
+				)
 				;(place-piece 2 *player-enter*) ; edited to player 2 for win testing
 				;(format t "Enter a column from 0 to 6 or q to quit!~%")
 			)
@@ -693,12 +721,15 @@
 
 	; checks for horizontal, vertical, and diagonal wins
 	; on players 1 and 2
+	;(format t "before check wins 1 in main~%")
 	(when (check-wins) (return 0))
 
 	; now its player two's turn - the agent
+	;(format t "before player 2 turn in main~%")
 	(player2-turn)
 
 	; recheck wins to see if player2 had a winning move
+	;(format t "before check wins 2 in main~%")
 	(when (check-wins) (return 0))
 
 	; exit if the player enters a -1
