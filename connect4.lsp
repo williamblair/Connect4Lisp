@@ -329,81 +329,6 @@
 ;;;;;;;;;;;;; AI/AGENT FUNCTIONS ;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; test if player 1 has 3 pieces in a row horizontally
-(defun player2-test-3inarow-horizontal()
-
-  	; first test the farthest left horizontally, so
-	; you would have to place the piece to the right
-	; of the other 3 to block it
-	(loop for row from 0 to 5
-		do(
-		             ; if the first three pieces are all 1s
-			if ( and (equal (nth (+ (* 7 row) 0) *board*) 1)
-				     (equal (nth (+ (* 7 row) 1) *board*) 1)
-					 (equal (nth (+ (* 7 row) 2) *board*) 1)
-				
-					 ; and if our current position in height
-					 ; is that row
-					 (equal (nth 3 *rowLocs*) row)
-				)
-				; return the 3rd column to place a piece in
-				; order to block the player
-				(setf *player2-col* 3)
-		)
-	)
-
-	; now test the middle horizontal 3 in a rows, where
-	; the ai can place a piece on either the left or the
-	; right side
-	(loop for col from 1 to 3
-		do(
-			loop for row from 0 to 5
-				do(
-					
-					if ( and (equal (nth (+ (* 7 row) (+ col 0)) *board*) 1)
-					    	 (equal (nth (+ (* 7 row) (+ col 1)) *board*) 1)
-							 (equal (nth (+ (* 7 row) (+ col 2)) *board*) 1)
-				
-							 ; and if our current position in height
-							 ; is that row
-							 (equal (nth 3 *rowLocs*) row)
-					)
-
-					; now figure out to place a piece on
-					; the left or the right of the block of 3
-					; for now just randomly choose left or right
-					; nth random returns either col-1 or col+2 by randomly selecting
-					; either the 0th or 1st position in the given list on the farthest
-					; right
-					(let((twolocs '((- col 1) (+ col 2))))	
-						(format t "- col 1 = ~a ~%" (- col 1))
-						(format t "+ col 2 = ~a ~%" (+ col 2))
-						(setf *player2-col* (nth (random 2) twolocs))
-					)
-				)
-		)
-	)
-
-; copied from test-win-horizontal for player 1
-;	(let()
-;    	(loop for x from 0 to 3
-;			do(
-;				loop for y from 0 to 5
-;					do(
-;						if ( and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 2)
-;				       		      (equal (nth (+ (* 7 y) (+ x 1)) *board*) 2)
-;				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 2)
-;				          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 2) )
-;							;(setf result 1)
-;							(return-from test-player2-win-horizontal t)
-;					)
-;			)
-;	    ) ; end of test horizontal wins for player 2
-;		(return-from test-player2-win-horizontal nil)
-;	)
-
-	;(setf *player2-col* -1) ; end of test-3inarow-horizontal
-)
 
 ; look for any winning moves
 (defun check-winning-moves(player) ; the player (either 1 or to) to return the winning column to
@@ -643,6 +568,34 @@
 	-1
 )
 
+; try to avoid getting caught with 3 in the middle and a win on each side
+(defun check-3-middle()
+	(loop for x from 0 to 3
+		do(
+			loop for y from 0 to 5
+				do(
+					when
+						(and
+							; two in a row with a gap on the left side ( x 1 1 x )
+							(equal (nth (+ (* 7 (+ y 0)) (+ x 1)) *board*) 1)
+							(equal (nth (+ (* 7 (+ y 0)) (+ x 2)) *board*) 1)
+
+							; the current space on the left is open
+							(equal (nth x *rowLocs*) y)
+							; the current space on the right is open
+							(equal (nth (+ x 3) *rowLocs*) y)
+						)
+						; TODO - determine wether left or right side is better to place
+						(return-from check-3-middle x);
+					
+				)
+		)
+	)
+
+	; if no danger of 3 in a row, return -1
+	-1
+)
+
 
 (defun player2-turn()
 
@@ -669,19 +622,22 @@
 		)
 	)
 
-	; make sure player 1 doesn't have 3 in a row
-		;(player2-test-3inarow-horizontal)
-		;(if (not (equal *player2-col* -1))
-		; 	; true
-		;	(let ()
-		;		(place-piece 2 *player2-col*)
-		;		(return-from player2-turn 0)
-		;	)
-		;)
+	; check for the danger of 3 in a row in the middle of the 
+	; board for player 1, if so stop it before it happens
+	(setf *player2-col* (check-3-middle))
+	(if (not (equal *player2-col* -1))
+		(let()
+			;(format t "before place piece again in player 2 turn ~%")
+			(place-piece 2 *player2-col*)
+			(return-from player2-turn 0)
+		)
+	)
 
-		; otherwise just place a piece randomly
-		;(format t "before place piece random ~%")
-		(place-piece 2 (random 7))
+
+	; otherwise just place a piece randomly
+	;(format t "before place piece random ~%")
+	; TODO - check to see if the random position hasn't been taken yet!!!
+	(place-piece 2 (random 7))
 )
 						
 ;;;;;;;;;;;;;;;;; MAIN LOOP ;;;;;;;;;;;;;;;;;;;;;;;;;;;
