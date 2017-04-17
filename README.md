@@ -24,8 +24,9 @@ From either a terminal (*NIX) or command prompt (Windows), run
 
 	clisp connect4.lisp
 
-or
+for the command line version, or
 	
 	clisp connect4-withgui.lisp
 
+for the gui version
 
