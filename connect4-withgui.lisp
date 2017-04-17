@@ -115,17 +115,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; see if player 1 has won
-(defun test-player1-win-horizontal()
+(defun test-player1-win-horizontal(board)
 	; test horizontal wins for player 1
 	(let()
     	(loop for x from 0 to 3
 			do(
 				loop for y from 0 to 5
 					do(
-						if ( and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 1)
-				       		      (equal (nth (+ (* 7 y) (+ x 1)) *board*) 1)
-				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 1)
-				          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 1) )
+						if ( and (equal (nth (+ (* 7 y) (+ x 0)) board) 1)
+				       		      (equal (nth (+ (* 7 y) (+ x 1)) board) 1)
+				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) board) 1)
+				          	      (equal (nth (+ (* 7 y) (+ x 3)) board) 1) )
 							;(setf result 1)
 							(return-from test-player1-win-horizontal t)
 					)
@@ -136,17 +136,17 @@
 )
 
 ; see if player 1 has won
-(defun test-player1-win-diagonal()
+(defun test-player1-win-diagonal(board)
 	; test diagonal wins for player 1
 	(let()
     	(loop for x from 0 to 3
 			do(
 				loop for y from 0 to 2
 					do(
-						if ( and (equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) 1)
-				       		      (equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) 1)
-				   	      	      (equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) 1)
-				          	      (equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) 1) )
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (+ x 0)) board) 1)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (+ x 1)) board) 1)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (+ x 2)) board) 1)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) 1) )
 							;(setf result 1)
 							(return-from test-player1-win-diagonal t)
 					)
@@ -156,10 +156,10 @@
 			do(
 				loop for y from 0 to 2
 					do(
-						if ( and (equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) 1)
-				       		      (equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) 1)
-				   	      	      (equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) 1)
-				          	      (equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) 1) )
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (- x 0)) board) 1)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (- x 1)) board) 1)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (- x 2)) board) 1)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) 1) )
 							;(setf result 1)
 							(return-from test-player1-win-diagonal t)
 					)
@@ -171,17 +171,17 @@
 	)
 )
 
-(defun test-player1-win-vertical()
+(defun test-player1-win-vertical(board)
 	; test vertical wins for player 1
 	(let()
     	(loop for x from 0 to 6
 			do(
 				loop for y from 0 to 2
 					do(
-						if ( and (equal (nth (+ (* 7 (+ y 0)) x) *board*) 1)
-				       		      (equal (nth (+ (* 7 (+ y 1)) x) *board*) 1)
-				   	      	      (equal (nth (+ (* 7 (+ y 2)) x) *board*) 1)
-				          	      (equal (nth (+ (* 7 (+ y 3)) x) *board*) 1) )
+						if ( and (equal (nth (+ (* 7 (+ y 0)) x) board) 1)
+				       		      (equal (nth (+ (* 7 (+ y 1)) x) board) 1)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) x) board) 1)
+				          	      (equal (nth (+ (* 7 (+ y 3)) x) board) 1) )
 							;(setf result 1)
 							(return-from test-player1-win-vertical t)
 					)
@@ -193,17 +193,17 @@
 
 
 ; see if player 2 has won
-(defun test-player2-win-horizontal()
+(defun test-player2-win-horizontal(board)
 	; test horizontal wins for player 1
 	(let()
     	(loop for x from 0 to 3
 			do(
 				loop for y from 0 to 5
 					do(
-						if ( and (equal (nth (+ (* 7 y) (+ x 0)) *board*) 2)
-				       		      (equal (nth (+ (* 7 y) (+ x 1)) *board*) 2)
-				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) *board*) 2)
-				          	      (equal (nth (+ (* 7 y) (+ x 3)) *board*) 2) )
+						if ( and (equal (nth (+ (* 7 y) (+ x 0)) board) 2)
+				       		      (equal (nth (+ (* 7 y) (+ x 1)) board) 2)
+				   	      	      (equal (nth (+ (* 7 y) (+ x 2)) board) 2)
+				          	      (equal (nth (+ (* 7 y) (+ x 3)) board) 2) )
 							;(setf result 1)
 							(return-from test-player2-win-horizontal t)
 					)
@@ -213,17 +213,17 @@
 	)
 )
 
-(defun test-player2-win-vertical()
+(defun test-player2-win-vertical(board)
 	; test vertical wins for player 2
 	(let()
     	(loop for x from 0 to 6
 			do(
 				loop for y from 0 to 2
 					do(
-						if ( and (equal (nth (+ (* 7 (+ y 0)) x) *board*) 2)
-				       		      (equal (nth (+ (* 7 (+ y 1)) x) *board*) 2)
-				   	      	      (equal (nth (+ (* 7 (+ y 2)) x) *board*) 2)
-				          	      (equal (nth (+ (* 7 (+ y 3)) x) *board*) 2) )
+						if ( and (equal (nth (+ (* 7 (+ y 0)) x) board) 2)
+				       		      (equal (nth (+ (* 7 (+ y 1)) x) board) 2)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) x) board) 2)
+				          	      (equal (nth (+ (* 7 (+ y 3)) x) board) 2) )
 							;(setf result 1)
 							(return-from test-player2-win-vertical t)
 					)
@@ -234,17 +234,17 @@
 )
 
 ; see if player 2 has won
-(defun test-player2-win-diagonal()
+(defun test-player2-win-diagonal(board)
 	; test diagonal wins for player 2
 	(let()
     	(loop for x from 0 to 3
 			do(
 				loop for y from 0 to 2
 					do(
-						if ( and (equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) 2)
-				       		      (equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) 2)
-				   	      	      (equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) 2)
-				          	      (equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) 2) )
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (+ x 0)) board) 2)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (+ x 1)) board) 2)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (+ x 2)) board) 2)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) 2) )
 							;(setf result 1)
 							(return-from test-player2-win-diagonal t)
 					)
@@ -254,10 +254,10 @@
 			do(
 				loop for y from 0 to 2
 					do(
-						if ( and (equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) 2)
-				       		      (equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) 2)
-				   	      	      (equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) 2)
-				          	      (equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) 2) )
+						if ( and (equal (nth (+ (* 7 (+ y 0)) (- x 0)) board) 2)
+				       		      (equal (nth (+ (* 7 (+ y 1)) (- x 1)) board) 2)
+				   	      	      (equal (nth (+ (* 7 (+ y 2)) (- x 2)) board) 2)
+				          	      (equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) 2) )
 							;(setf result 1)
 							(return-from test-player2-win-diagonal t)
 					)
@@ -269,10 +269,10 @@
 	)
 )
 
-(defun check-wins()
+(defun check-wins(board)
 	;;;;;;;;; test player 1 for wins ;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	(if (eq (test-player1-win-horizontal) t)
+	(if (eq (test-player1-win-horizontal board) t)
 	  (let()
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
@@ -280,7 +280,7 @@
 		(return-from check-wins t) ; exit this loop
 	  )
 	)
-	(if (eq (test-player1-win-vertical) t)
+	(if (eq (test-player1-win-vertical board) t)
 	  (let()
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
@@ -288,7 +288,7 @@
 		(return-from check-wins t) ; exit this loop
 	  )
 	)
-	(if (eq (test-player1-win-diagonal) t)
+	(if (eq (test-player1-win-diagonal board) t)
 	  (let()
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
@@ -301,7 +301,7 @@
 
 	;;;;;;;;; test player 2 for wins ;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	(if (eq (test-player2-win-horizontal) t)
+	(if (eq (test-player2-win-horizontal board) t)
 	  (let()
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
@@ -309,7 +309,7 @@
 		(return-from check-wins t) ; exit this loop
 	  )
 	)
-	(if (eq (test-player2-win-vertical) t)
+	(if (eq (test-player2-win-vertical board) t)
 	  (let()
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
@@ -317,7 +317,7 @@
 		(return-from check-wins t) ; exit this loop
 	  )
 	)
-	(if (eq (test-player2-win-diagonal) t)
+	(if (eq (test-player2-win-diagonal board) t)
 	  (let()
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
@@ -443,9 +443,9 @@
 				;else
 				(format t "Sorry, not your turn! ~%")
 			)
-			(when (check-wins) (setf *isrunning* nil))
+			(when (check-wins *board*) (setf *isrunning* nil))
 			(when (eq *isrunning* t) (player2-turn canvas))
-			(when (check-wins) (setf *isrunning* nil))
+			(when (check-wins *board*) (setf *isrunning* nil))
 			(setf *playerturn* 1)
 		)
 	)
@@ -459,7 +459,7 @@
 
 
 ; look for any winning moves
-(defun check-winning-moves(player) ; the player (either 1 or to) to return the winning column to
+(defun check-winning-moves(player board) ; the player (either 1 or to) to return the winning column to
 	
 	; test horizontally
 	(loop for x from 0 to 3
@@ -470,10 +470,10 @@
 				do(
 					let()
 						;(format t "x+0=~a x+1=~a x+2=~a x+3=~a rowLocs[x+3]=~a ~%" 
-						;	(nth (+ (* 7 y)(+ x 0)) *board*)
-						;	(nth (+ (* 7 y)(+ x 1)) *board*)
-						;	(nth (+ (* 7 y)(+ x 2)) *board*)
-						;	(nth (+ (* 7 y)(+ x 3)) *board*)
+						;	(nth (+ (* 7 y)(+ x 0)) board)
+						;	(nth (+ (* 7 y)(+ x 1)) board)
+						;	(nth (+ (* 7 y)(+ x 2)) board)
+						;	(nth (+ (* 7 y)(+ x 3)) board)
 						;	(nth (+ x 3) *rowLocs*)
 						;)
 
@@ -481,9 +481,9 @@
 						;(format t "before when 1 in check winning moves ~%")
 						;(format t "X = ~a  Y = ~a ~%" x y)
 						(when (and (> y -1)
-								(equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 1)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) player)
+								(equal (nth (+ (* 7 y) (+ x 0)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 1)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 2)) board) player)
 								(equal (nth (+ x 3) *rowLocs*) y))
 					
 					        	;true
@@ -495,9 +495,9 @@
 						; first loc empty (x 2 2 2)
 						;(format t "before when 2 in check winning moves ~%")
 						(when (and (> y -1)
-								(equal (nth (+ (* 7 y) (+ x 1)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) player)
+								(equal (nth (+ (* 7 y) (+ x 1)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 2)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 3)) board) player)
 								(equal (nth (+ x 0) *rowLocs*) y))
 					
 					        	;true
@@ -509,9 +509,9 @@
 						; second loc empty (2 x 2 2)
 						;(format t "before when 3 in check winning moves ~%")
 						(when (and (> y -1) 
-								(equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 2)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) player)
+								(equal (nth (+ (* 7 y) (+ x 0)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 2)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 3)) board) player)
 								(equal (nth (+ x 1) *rowLocs*) y))
 					
 					        	;true
@@ -523,9 +523,9 @@
 						; third loc empty (2 2 x 2)
 						;(format t "before when 4 in check winning moves ~%")
 						(when (and (> y -1)
-								(equal (nth (+ (* 7 y) (+ x 0)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 1)) *board*) player)
-						        (equal (nth (+ (* 7 y) (+ x 3)) *board*) player)
+								(equal (nth (+ (* 7 y) (+ x 0)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 1)) board) player)
+						        (equal (nth (+ (* 7 y) (+ x 3)) board) player)
 								(equal (nth (+ x 2) *rowLocs*) y))
 					
 					        	;true
@@ -548,11 +548,11 @@
 						(when 
 							(and (> y -1)
 								; the three y positions below our current = 2
-								(equal (nth (+ (* 7 (+ y 3)) x) *board*) player)
-								(equal (nth (+ (* 7 (+ y 2)) x) *board*) player)
-								(equal (nth (+ (* 7 (+ y 1)) x) *board*) player)
+								(equal (nth (+ (* 7 (+ y 3)) x) board) player)
+								(equal (nth (+ (* 7 (+ y 2)) x) board) player)
+								(equal (nth (+ (* 7 (+ y 1)) x) board) player)
 								; the current y position is empty
-								(equal (nth (+ (* 7 (+ y 0)) x) *board*) 0)
+								(equal (nth (+ (* 7 (+ y 0)) x) board) 0)
 							)
 							(return-from check-winning-moves x)
 						)
@@ -570,9 +570,9 @@
 						; three in a row diagonal to the left (2 2 2 x)
 						(when 
 							(and (> y -1)
-								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) board) player)
+								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) board) player)
+								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (+ x 3) *rowLocs*) (+ y 3))
@@ -584,9 +584,9 @@
 						;(format t "in check diagonally in check-winning-move ~%")
 						(when 
 							(and (> y -1)
-								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) board) player)
+								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) board) player)
+								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (+ x 0) *rowLocs*) (+ y 0))
@@ -598,9 +598,9 @@
 						;(format t "in check diagonally in 2 check-winning-move ~%")
 						(when 
 							(and (> y -1)
-								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) board) player)
+								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) board) player)
+								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (+ x 1) *rowLocs*) (+ y 1))
@@ -612,9 +612,9 @@
 						;(format t "in check diagonally in 3 check-winning-move ~%")
 						(when 
 							(and (> y -1)
-								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 0)) (+ x 0)) board) player)
+								(equal (nth (+ (* 7 (+ y 1)) (+ x 1)) board) player)
+								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (+ x 2) *rowLocs*) (+ y 2))
@@ -636,9 +636,9 @@
 						;(format t "in check diagonally in 4 check-winning-move ~%")
 						(when 
 							(and
-								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) board) player)
+								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) board) player)
+								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (- x 0) *rowLocs*) (+ y 0))
@@ -650,9 +650,9 @@
 						;(format t "in check diagonally in 5 check-winning-move ~%")
 						(when 
 							(and
-								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) board) player)
+								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) board) player)
+								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (- x 2) *rowLocs*) (+ y 2))
@@ -664,9 +664,9 @@
 						;(format t "in check diagonally in 6 check-winning-move ~%")
 						(when 
 							(and
-								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) board) player)
+								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) board) player)
+								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (- x 1) *rowLocs*) (+ y 1))
@@ -678,9 +678,9 @@
 						;(format t "in check diagonally in 7 check-winning-move ~%")
 						(when 
 							(and
-								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) *board*) player)
-								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) *board*) player)
+								(equal (nth (+ (* 7 (+ y 0)) (- x 0)) board) player)
+								(equal (nth (+ (* 7 (+ y 1)) (- x 1)) board) player)
+								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
 								(equal (nth (- x 3) *rowLocs*) (+ y 3))
@@ -719,17 +719,73 @@
 				)
 		)
 	)
+	
+	(loop for x from 0 to 2
+		do(
+			loop for y from 0 to 5
+				do(
+					when
+						(and
+							; two seperated by a space with a gap on either side ( x 1 0 1 0 )
+							(equal (nth (+ (* 7 (+ y 0)) (+ x 1)) *board*) 1)
+							(equal (nth (+ (* 7 (+ y 0)) (+ x 2)) *board*) 0)
+							(equal (nth (+ (* 7 (+ y 0)) (+ x 3)) *board*) 1)
+							
+							; and the place on the left is untaken ( 0 1 0 1 0 )
+							(equal (nth x *rowLocs*) y)
+						)
+						(return-from check-3-middle x)
+				)
+		)
+	)
 
 	; if no danger of 3 in a row, return -1
 	-1
 )
 
+; determine wether it's worth going in the middle
+; at the moment the check is if columns 2, 3, and 4 
+; all have <= 3 pieces in them 
+(defun check-worth-middle()
+
+	; check the middle 3
+	(when
+		(and
+			(> (nth 2 *rowLocs*) 2)
+			(> (nth 3 *rowLocs*) 2)
+			(> (nth 4 *rowLocs*) 2)
+						
+		)
+		(let()
+			;(format t "In the top part of check worth middle!~%")
+			(return-from check-worth-middle (+ (random 3) 2))
+		)
+	)
+	
+	; now check all places except the edges
+	(when
+		(and
+			(> (nth 1 *rowLocs*) 1)
+			(> (nth 2 *rowLocs*) 1)
+			(> (nth 3 *rowLocs*) 1)
+			(> (nth 4 *rowLocs*) 1)
+			(> (nth 5 *rowLocs*) 1)
+		)
+		(let()
+			;(format t "In the bottom part of check worth middle!~%")
+			(return-from check-worth-middle (+ (random 4) 1))
+		)
+	)
+	
+	; otherwise return -1
+	-1
+)
 
 (defun player2-turn(canvas)
 
 	; check for a winning move; if so take it
 	;(format t "before check winning moves in player 2 turn ~%")
-	(setf *player2-col* (check-winning-moves 2))
+	(setf *player2-col* (check-winning-moves 2 *board*))
 	(if (not (equal *player2-col* -1))
 		(let()
 			;(format t "before place piece player 2 ~%")
@@ -741,7 +797,7 @@
 	; check for a winning move for player 1; if so block it
 	;(format t "check winning moves = ~a ~%" (check-winning-moves))
 	;(format t "before check winning moves again in player 2 turn ~%")
-	(setf *player2-col* (check-winning-moves 1))
+	(setf *player2-col* (check-winning-moves 1 *board*))
 	(if (not (equal *player2-col* -1))
 		(let()
 			;(format t "before place piece again in player 2 turn ~%")
@@ -760,12 +816,31 @@
 			(return-from player2-turn 0)
 		)
 	)
+	
+	; choose middle columns over edge columns
+	(setf *player2-col* (check-worth-middle))
+	(if (not (equal *player2-col* -1))
+		(let()
+			(place-piece 2 *player2-col* canvas)
+			(return-from player2-turn 0)
+		)
+	)
 
 
 	; otherwise just place a piece randomly
-	;(format t "before place piece random ~%")
-	; TODO - check to see if the random position hasn't been taken yet!!!
-	(place-piece 2 (random 7) canvas)
+	; format t "before place piece random ~%")
+	; loop until the randomly generated position doesn't result in a full column
+	(loop
+		do (
+			let()
+				(setf *player2-col* (random 7))
+				(when (not (equal (nth *player2-col* *rowLocs*) -1))
+					(return)
+				)
+		)
+	)
+	; now that a not full column has been chosen place it
+	(place-piece 2 *player2-col* canvas)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
