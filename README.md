@@ -2,7 +2,7 @@
 A connect four clone written in LISP
 Written for CS 495 - Artificial Intelligence as a final project
 
-# RUNNING
+# PREREQUISITS
 
 Connect4Lisp was written for clisp but would probably work with
 other versions of LISP as well. GNU clisp is available on *NIX systems,
@@ -18,3 +18,12 @@ can be found here:
 	https://www.activestate.com/activetcl
 	
 Tcl/Tk is installable on Linux systems; and has been tested on Arch.
+
+# RUNNING
+From either a terminal (*NIX) or command prompt (Windows), run
+
+	clisp connect4.lisp
+or
+	clisp connect4-withgui.lisp
+
+
