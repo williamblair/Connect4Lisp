@@ -1,6 +1,6 @@
 ; testing drawing a board with ltk
-(compile-file "ltk")
-(load "ltk")
+(compile-file "ltk/ltk")
+(load "ltk/ltk")
 (in-package :ltk)
 
 ;;;;;;;;;;;;;;;;;; GLOBAL VARIABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
