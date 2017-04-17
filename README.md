@@ -19,6 +19,10 @@ can be found here:
 	
 Tcl/Tk is installable on Linux systems; and has been tested on Arch.
 
+To install Tcl/Tk on arch:
+
+	sudo pacman -S tcl tk
+
 # RUNNING
 From either a terminal (*NIX) or command prompt (Windows), run
 
