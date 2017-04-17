@@ -23,6 +23,10 @@ To install Tcl/Tk on arch:
 
 	sudo pacman -S tcl tk
 
+Debian:
+
+	sudo apt-get install tcl tk
+
 # RUNNING
 From either a terminal (*NIX) or command prompt (Windows), run
 
