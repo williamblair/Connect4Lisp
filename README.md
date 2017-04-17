@@ -23,7 +23,9 @@ Tcl/Tk is installable on Linux systems; and has been tested on Arch.
 From either a terminal (*NIX) or command prompt (Windows), run
 
 	clisp connect4.lisp
+
 or
+	
 	clisp connect4-withgui.lisp
 
 
