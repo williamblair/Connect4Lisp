@@ -38,6 +38,9 @@
 ; seed the lisp random generator
 (setf *random-state* (make-random-state t))
 
+; randomly set a turn - either 1 or 2
+(setf *playerturn* (+ (random 2) 1))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -78,24 +81,24 @@
 ; *row* to be replaced with 'falling' function
 ; in a single list, row/column is calculated through (row*width + colummn)
 ; player is either a 1 or 2
-(defun place-piece(player column canvas)
-	(if (equal (nth column *rowLocs*) -1)
+(defun place-piece(player column rowlocs canvas)
+	(if (equal (nth column rowlocs) -1)
 		; if the column thing already equals 0
 		(format t "Column ~a is already full!~%~%" column)
 		; else
 		(let (
 				(canvas-piece (create-oval canvas (+ (* (+ column 1) 60) 60) ; x1
-				                                  (+ (* (nth column *rowLocs*) 60) 60) ; y1
+				                                  (+ (* (nth column rowlocs) 60) 60) ; y1
 				                                  (+ (+ (* (+ column 1) 60) 60) *PIECE_SIZE*); x2
-				                                  (+ (+ (* (nth column *rowLocs*) 60) 60) *PIECE_SIZE*) ; y2
+				                                  (+ (+ (* (nth column rowlocs) 60) 60) *PIECE_SIZE*) ; y2
 				              )
 				)
 			)
 			;board[7*rowLocs[column]+column] = player;
 			;basically board[row][column] = player
-			(setf (nth (+ (* 7 (nth column *rowLocs*)) column) *board*) player)
+			(setf (nth (+ (* 7 (nth column rowlocs)) column) *board*) player)
 			; rowLocs[column] -= 1
-			(setf (nth column *rowLocs*) (- (nth column *rowLocs*) 1))
+			(setf (nth column rowlocs) (- (nth column rowlocs) 1))
 			
 			; draw the piece on the canvas
 			(when (equal player 1) 
@@ -104,6 +107,23 @@
 			(when (equal player 2)
 				(itemconfigure canvas canvas-piece :fill "red")   ; false, so player 2
 			)
+		)
+	)
+)
+
+; same as above but doesn't add a piece to the canvas
+; used in player2 testing giving player1 win
+(defun place-piece-nocanvas(player column board rowlocs)
+	(if (equal (nth column rowlocs) -1)
+		; if the column thing already equals 0
+		(format t "Column ~a is already full!~%~%" column)
+		; else
+		(let ()
+			;board[7*rowLocs[column]+column] = player;
+			;basically board[row][column] = player
+			(setf (nth (+ (* 7 (nth column rowlocs)) column) board) player)
+			; rowLocs[column] -= 1
+			(setf (nth column rowlocs) (- (nth column rowlocs) 1))
 		)
 	)
 )
@@ -277,7 +297,7 @@
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
-		(return-from check-wins t) ; exit this loop
+		(return-from check-wins 1) ; exit this loop
 	  )
 	)
 	(if (eq (test-player1-win-vertical board) t)
@@ -285,7 +305,7 @@
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
-		(return-from check-wins t) ; exit this loop
+		(return-from check-wins 1) ; exit this loop
 	  )
 	)
 	(if (eq (test-player1-win-diagonal board) t)
@@ -293,7 +313,7 @@
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
-		(return-from check-wins t) ; exit this loop
+		(return-from check-wins 1) ; exit this loop
 	  )
 	)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -306,7 +326,7 @@
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
-		(return-from check-wins t) ; exit this loop
+		(return-from check-wins 2) ; exit this loop
 	  )
 	)
 	(if (eq (test-player2-win-vertical board) t)
@@ -314,7 +334,7 @@
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
-		(return-from check-wins t) ; exit this loop
+		(return-from check-wins 2) ; exit this loop
 	  )
 	)
 	(if (eq (test-player2-win-diagonal board) t)
@@ -322,13 +342,13 @@
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
-		(return-from check-wins t) ; exit this loop
+		(return-from check-wins 2) ; exit this loop
 	  )
 	)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-	nil ; return false if no wins
+	-1 ; return -1 on no wins
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -413,13 +433,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;; EVENT FUNCTIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; checks which version of lisp this is and calls the correct exit
-(defun my-quit ()
-  #+sbcl (sb-ext:quit)
-  #+clisp (ext:exit)
-  #+ccl (ccl:quit)
-  #+allegro (excl:exit))
-
 (defun bind-buttonPress(canvas)
 	(bind canvas "<ButtonPress-1>"
 		(lambda (evt)
@@ -428,13 +441,13 @@
 					(setf down t)
 					(cond 
 						;((equal *player-enter* -1) (return 0))
-						((and (> (event-x evt) 110) (< (event-x evt) 170)) (let() (setf *playerturn* 2) (place-piece 1 0 canvas)))
-						((and (> (event-x evt) 170) (< (event-x evt) 230)) (let() (setf *playerturn* 2) (place-piece 1 1 canvas)))
-						((and (> (event-x evt) 230) (< (event-x evt) 290)) (let() (setf *playerturn* 2) (place-piece 1 2 canvas)))
-						((and (> (event-x evt) 290) (< (event-x evt) 350)) (let() (setf *playerturn* 2) (place-piece 1 3 canvas)))
-						((and (> (event-x evt) 350) (< (event-x evt) 410)) (let() (setf *playerturn* 2) (place-piece 1 4 canvas)))
-						((and (> (event-x evt) 410) (< (event-x evt) 470)) (let() (setf *playerturn* 2) (place-piece 1 5 canvas)))
-						((and (> (event-x evt) 470) (< (event-x evt) 530)) (let() (setf *playerturn* 2) (place-piece 1 6 canvas)))
+						((and (> (event-x evt) 110) (< (event-x evt) 170)) (let() (setf *playerturn* 2) (place-piece 1 0 *rowLocs* canvas)))
+						((and (> (event-x evt) 170) (< (event-x evt) 230)) (let() (setf *playerturn* 2) (place-piece 1 1 *rowLocs* canvas)))
+						((and (> (event-x evt) 230) (< (event-x evt) 290)) (let() (setf *playerturn* 2) (place-piece 1 2 *rowLocs* canvas)))
+						((and (> (event-x evt) 290) (< (event-x evt) 350)) (let() (setf *playerturn* 2) (place-piece 1 3 *rowLocs* canvas)))
+						((and (> (event-x evt) 350) (< (event-x evt) 410)) (let() (setf *playerturn* 2) (place-piece 1 4 *rowLocs* canvas)))
+						((and (> (event-x evt) 410) (< (event-x evt) 470)) (let() (setf *playerturn* 2) (place-piece 1 5 *rowLocs* canvas)))
+						((and (> (event-x evt) 470) (< (event-x evt) 530)) (let() (setf *playerturn* 2) (place-piece 1 6 *rowLocs* canvas)))
 			
 						(t (format t "Invalid click range!~%"))
 					)
@@ -443,9 +456,9 @@
 				;else
 				(format t "Sorry, not your turn! ~%")
 			)
-			(when (check-wins *board*) (setf *isrunning* nil))
+			(when (not (equal (check-wins *board*) -1)) (setf *isrunning* nil))
 			(when (eq *isrunning* t) (player2-turn canvas))
-			(when (check-wins *board*) (setf *isrunning* nil))
+			(when (not (equal (check-wins *board*) -1)) (setf *isrunning* nil))
 			(setf *playerturn* 1)
 		)
 	)
@@ -459,14 +472,14 @@
 
 
 ; look for any winning moves
-(defun check-winning-moves(player board) ; the player (either 1 or to) to return the winning column to
+(defun check-winning-moves(player board rowlocs) ; the player (either 1 or 2) to return the winning column to
 	
 	; test horizontally
 	(loop for x from 0 to 3
 		do(
 			let()
 			;(format t "before nth in rowlocs in check winning moves ~%")
-			(loop for y from (nth (+ x 3) *rowLocs*) to 5
+			(loop for y from (nth (+ x 3) rowlocs) to 5
 				do(
 					let()
 						;(format t "x+0=~a x+1=~a x+2=~a x+3=~a rowLocs[x+3]=~a ~%" 
@@ -474,7 +487,7 @@
 						;	(nth (+ (* 7 y)(+ x 1)) board)
 						;	(nth (+ (* 7 y)(+ x 2)) board)
 						;	(nth (+ (* 7 y)(+ x 3)) board)
-						;	(nth (+ x 3) *rowLocs*)
+						;	(nth (+ x 3) rowlocs)
 						;)
 
 						; basic 3 in a row - fourth spot empty (2 2 2 x)
@@ -484,7 +497,7 @@
 								(equal (nth (+ (* 7 y) (+ x 0)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 1)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 2)) board) player)
-								(equal (nth (+ x 3) *rowLocs*) y))
+								(equal (nth (+ x 3) rowlocs) y))
 					
 					        	;true
 						        (return-from check-winning-moves (+ x 3))
@@ -498,7 +511,7 @@
 								(equal (nth (+ (* 7 y) (+ x 1)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 2)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 3)) board) player)
-								(equal (nth (+ x 0) *rowLocs*) y))
+								(equal (nth (+ x 0) rowlocs) y))
 					
 					        	;true
 						        (return-from check-winning-moves (+ x 0))
@@ -512,7 +525,7 @@
 								(equal (nth (+ (* 7 y) (+ x 0)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 2)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 3)) board) player)
-								(equal (nth (+ x 1) *rowLocs*) y))
+								(equal (nth (+ x 1) rowlocs) y))
 					
 					        	;true
 						        (return-from check-winning-moves (+ x 1))
@@ -526,7 +539,7 @@
 								(equal (nth (+ (* 7 y) (+ x 0)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 1)) board) player)
 						        (equal (nth (+ (* 7 y) (+ x 3)) board) player)
-								(equal (nth (+ x 2) *rowLocs*) y))
+								(equal (nth (+ x 2) rowlocs) y))
 					
 					        	;true
 						        (return-from check-winning-moves (+ x 2))
@@ -575,7 +588,7 @@
 								(equal (nth (+ (* 7 (+ y 2)) (+ x 2)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (+ x 3) *rowLocs*) (+ y 3))
+								(equal (nth (+ x 3) rowlocs) (+ y 3))
 							)
 							(return-from check-winning-moves (+ x 3))
 						)
@@ -589,7 +602,7 @@
 								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (+ x 0) *rowLocs*) (+ y 0))
+								(equal (nth (+ x 0) rowlocs) (+ y 0))
 							)
 							(return-from check-winning-moves (+ x 0))
 						)
@@ -603,7 +616,7 @@
 								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (+ x 1) *rowLocs*) (+ y 1))
+								(equal (nth (+ x 1) rowlocs) (+ y 1))
 							)
 							(return-from check-winning-moves (+ x 1))
 						)
@@ -617,7 +630,7 @@
 								(equal (nth (+ (* 7 (+ y 3)) (+ x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (+ x 2) *rowLocs*) (+ y 2))
+								(equal (nth (+ x 2) rowlocs) (+ y 2))
 							)
 							(return-from check-winning-moves (+ x 2))
 						)
@@ -641,7 +654,7 @@
 								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (- x 0) *rowLocs*) (+ y 0))
+								(equal (nth (- x 0) rowlocs) (+ y 0))
 							)
 							(return-from check-winning-moves (- x 0))
 						)
@@ -655,7 +668,7 @@
 								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (- x 2) *rowLocs*) (+ y 2))
+								(equal (nth (- x 2) rowlocs) (+ y 2))
 							)
 							(return-from check-winning-moves (- x 2))
 						)
@@ -669,7 +682,7 @@
 								(equal (nth (+ (* 7 (+ y 3)) (- x 3)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (- x 1) *rowLocs*) (+ y 1))
+								(equal (nth (- x 1) rowlocs) (+ y 1))
 							)
 							(return-from check-winning-moves (- x 1))
 						)
@@ -683,7 +696,7 @@
 								(equal (nth (+ (* 7 (+ y 2)) (- x 2)) board) player)
 								; and the next space down to the right is the next piece
 								; to be played in that column
-								(equal (nth (- x 3) *rowLocs*) (+ y 3))
+								(equal (nth (- x 3) rowlocs) (+ y 3))
 							)
 							(return-from check-winning-moves (- x 3))
 						)
@@ -781,15 +794,42 @@
 	-1
 )
 
+; returns t if the given column placed with the current board
+; and adjusting the given rowlocs results in a win for player1,
+; otherwise returns nil
+;(defvar *temp-board* '())
+(defun give-player1-winning-move(curboard currowlocs column)
+
+	(let(
+			; copy the current board into a temporary board
+			(tempboard (copy-list curboard))
+			
+			; copy the current rowlocs into a temporary rowloc	
+			(temprowlocs (copy-list currowlocs))
+		)
+
+		; place the piece in the hypothetical board
+		(place-piece-nocanvas 2 column tempboard temprowlocs)
+		
+		; if the new board with the piece results in a win for player1,
+		; return true
+		(when (not (equal (check-winning-moves 1 tempboard temprowlocs) -1))
+			(return-from give-player1-winning-move t)
+		)
+	)
+	
+	nil ; otherwise return false
+)
+
 (defun player2-turn(canvas)
 
 	; check for a winning move; if so take it
 	;(format t "before check winning moves in player 2 turn ~%")
-	(setf *player2-col* (check-winning-moves 2 *board*))
+	(setf *player2-col* (check-winning-moves 2 *board* *rowLocs*))
 	(if (not (equal *player2-col* -1))
 		(let()
 			;(format t "before place piece player 2 ~%")
-			(place-piece 2 *player2-col* canvas)
+			(place-piece 2 *player2-col* *rowLocs* canvas)
 			(return-from player2-turn 0)
 		)
 	)
@@ -797,11 +837,11 @@
 	; check for a winning move for player 1; if so block it
 	;(format t "check winning moves = ~a ~%" (check-winning-moves))
 	;(format t "before check winning moves again in player 2 turn ~%")
-	(setf *player2-col* (check-winning-moves 1 *board*))
+	(setf *player2-col* (check-winning-moves 1 *board* *rowLocs*))
 	(if (not (equal *player2-col* -1))
 		(let()
 			;(format t "before place piece again in player 2 turn ~%")
-			(place-piece 2 *player2-col* canvas)
+			(place-piece 2 *player2-col* *rowLocs* canvas)
 			(return-from player2-turn 0)
 		)
 	)
@@ -812,8 +852,14 @@
 	(if (not (equal *player2-col* -1))
 		(let()
 			;(format t "before place piece again in player 2 turn ~%")
-			(place-piece 2 *player2-col* canvas)
-			(return-from player2-turn 0)
+			(if (not (give-player1-winning-move *board* *rowLocs* *player2-col*))
+				(let()
+					(place-piece 2 *player2-col* *rowLocs* canvas)
+					(return-from player2-turn 0)
+				)
+				;else
+				(format t "avoided giving player 1 a winning move! with col ~a~%" *player2-col*)
+			)
 		)
 	)
 	
@@ -821,11 +867,19 @@
 	(setf *player2-col* (check-worth-middle))
 	(if (not (equal *player2-col* -1))
 		(let()
-			(place-piece 2 *player2-col* canvas)
-			(return-from player2-turn 0)
+			(if (not (give-player1-winning-move *board* *rowLocs* *player2-col*))
+				(let()
+					(place-piece 2 *player2-col* *rowLocs* canvas)
+					(return-from player2-turn 0)
+				)
+				;else
+				(format t "avoided giving player 1 a winning move! with col ~a~%" *player2-col*)
+			)
 		)
 	)
 
+	; generate a list of columns that aren't taken
+	;(let()
 
 	; otherwise just place a piece randomly
 	; format t "before place piece random ~%")
@@ -834,13 +888,15 @@
 		do (
 			let()
 				(setf *player2-col* (random 7))
-				(when (not (equal (nth *player2-col* *rowLocs*) -1))
+				(when (and
+						(not (equal (nth *player2-col* *rowLocs*) -1))
+						(not (give-player1-winning-move *board* *rowLocs* *player2-col*)))
 					(return)
 				)
 		)
 	)
 	; now that a not full column has been chosen place it
-	(place-piece 2 *player2-col* canvas)
+	(place-piece 2 *player2-col* *rowLocs* canvas)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -859,6 +915,14 @@
 			(draw-board c)
 			
 			(format t "Welcome to Connect 4!~%~%")
+
+			; if player 2 was decided first to go, have them go
+			(when (equal *playerturn* 2)
+				(let()
+					(player2-turn c)
+					(setf *playerturn* 1)
+				)
+			)
 
 		)
 	)
