@@ -289,7 +289,7 @@
 	)
 )
 
-(defun check-wins(board)
+(defun check-wins(board canvas)
 	;;;;;;;;; test player 1 for wins ;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	(if (eq (test-player1-win-horizontal board) t)
@@ -297,6 +297,7 @@
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(create-text canvas 400 440 "Player 1 Wins!")
 		(return-from check-wins 1) ; exit this loop
 	  )
 	)
@@ -305,6 +306,7 @@
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(create-text canvas 400 440 "Player 1 Wins!")
 		(return-from check-wins 1) ; exit this loop
 	  )
 	)
@@ -313,6 +315,7 @@
 		;(print-board)
 	  	(format t "Player 1 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(create-text canvas 400 440 "Player 1 Wins!")
 		(return-from check-wins 1) ; exit this loop
 	  )
 	)
@@ -326,6 +329,7 @@
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(create-text canvas 400 440 "Player 2 Wins!")
 		(return-from check-wins 2) ; exit this loop
 	  )
 	)
@@ -334,6 +338,7 @@
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(create-text canvas 400 440 "Player 2 Wins!")
 		(return-from check-wins 2) ; exit this loop
 	  )
 	)
@@ -342,6 +347,7 @@
 		;(print-board)
 	  	(format t "Player 2 Wins!~%")
 		(setf *player-enter* -1) ; make the game exit
+		(create-text canvas 400 440 "Player 2 Wins!")
 		(return-from check-wins 2) ; exit this loop
 	  )
 	)
@@ -456,9 +462,9 @@
 				;else
 				(format t "Sorry, not your turn! ~%")
 			)
-			(when (not (equal (check-wins *board*) -1)) (setf *isrunning* nil))
+			(when (not (equal (check-wins *board* canvas) -1)) (setf *isrunning* nil))
 			(when (eq *isrunning* t) (player2-turn canvas))
-			(when (not (equal (check-wins *board*) -1)) (setf *isrunning* nil))
+			(when (not (equal (check-wins *board* canvas) -1)) (setf *isrunning* nil))
 			(setf *playerturn* 1)
 		)
 	)
