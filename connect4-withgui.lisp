@@ -356,6 +356,27 @@
 
 	-1 ; return -1 on no wins
 )
+
+; return true when the board is full
+(defun check-full(board canvas rowLocs)
+	(when (and
+			(equal (nth 0 rowLocs) -1)
+			(equal (nth 1 rowLocs) -1)
+			(equal (nth 2 rowLocs) -1)
+			(equal (nth 3 rowLocs) -1)
+			(equal (nth 4 rowLocs) -1)
+			(equal (nth 5 rowLocs) -1)
+			(equal (nth 6 rowLocs) -1)
+		)
+		(let ()
+			(create-text canvas 400 440 "It's a draw!")
+			(return-from check-full t)
+		)
+	)
+	; otherwise return false
+	nil
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -478,8 +499,10 @@
 				(format t "Sorry, not your turn! ~%")
 			)
 			(when (not (equal (check-wins *board* canvas) -1)) (setf *isrunning* nil))
+			(when (eq (check-full *board* canvas *rowLocs*) t) (setf *isrunning* nil))
 			(when (eq *isrunning* t) (player2-turn canvas))
 			(when (not (equal (check-wins *board* canvas) -1)) (setf *isrunning* nil))
+			(when (eq (check-full *board* canvas *rowLocs*) t) (setf *isrunning* nil))
 			(setf *playerturn* 1)
 		)
 	)
@@ -864,7 +887,11 @@
 	nil ; otherwise return false
 )
 
+(defvar *cycleCounter* 0) ; keep track of how many loops the random selection
+                          ; has gone through to keep it from freezing
 (defun player2-turn(canvas)
+
+	(setf *cycleCounter* 0) ; reset the cycle counter
 
 	; check for a winning move; if so take it
 	;(format t "before check winning moves in player 2 turn ~%")
@@ -936,6 +963,20 @@
 						(not (give-player1-winning-move *board* *rowLocs* *player2-col*)))
 					(return)
 				)
+				(setf *cycleCounter* (+ *cycleCounter* 1))
+				(when (> *cycleCounter* 400) (return))
+		)
+	)
+	(setf *cycleCounter* 0)
+	(when (equal (nth *player2-col* *rowLocs*) -1)
+		(loop
+			do(
+				let()
+					(setf *player2-col* (random 7))
+					(when (not (equal (nth *player2-col* *rowLocs*) -1))
+						(return)
+					)
+			)
 		)
 	)
 	; now that a not full column has been chosen place it
