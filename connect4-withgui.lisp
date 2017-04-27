@@ -457,9 +457,11 @@
 (defun draw-welcomeMessage(canvas)
 	(create-text canvas 10 10 "Welcome to Connect 4!")
 	(create-text canvas 10 30 "You are the black pieces, playing against the computer (red pieces)")
-	(create-text canvas 10 70 "Place pieces by clicking inside the column where you wish to play")
-	(create-text canvas 10 90 "The computer will automatically play after you (or before you if they go first)")
-	(create-text canvas 10 130 "For strategies/how the computer works, please refer to README.md")
+	(create-text canvas 10 70 "Your goal is to get four of your pieces in a row and")
+	(create-text canvas 10 90 "prevent the computer from doing the same")
+	(create-text canvas 10 130 "Place pieces by clicking inside the column where you wish to play")
+	(create-text canvas 10 170 "The computer will automatically play after you (or before you if they go first)")
+	(create-text canvas 10 190 "For strategies/how the computer works, please refer to PLEASE_README_FIRST.txt")
 	
 	(create-text canvas 260 315 "Click me to Play!")
 	
