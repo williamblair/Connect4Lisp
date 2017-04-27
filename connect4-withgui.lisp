@@ -32,9 +32,6 @@
 ; shows where to place the piece in terms of height
 (defparameter *rowLocs* '(5 5 5 5 5 5 5))
 
-; used in the main loop to take player input
-;(defparameter *player-enter* 0)
-
 ; seed the lisp random generator
 (setf *random-state* (make-random-state t))
 
@@ -75,12 +72,10 @@
 ;;;;;;;;;;;;;; INTERNAL BOARD FUNCTIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; *row* to be replaced with 'falling' function
-; in a single list, row/column is calculated through (row*width + colummn)
-; player is either a 1 or 2
-; *row* to be replaced with 'falling' function
-; in a single list, row/column is calculated through (row*width + colummn)
-; player is either a 1 or 2
+; player - 1 or 2, representing which player's piece it is
+; column - which column of the board to place in
+; rowlocs - the list keeping track of the height of each column
+; canvas - the GUI canvas to draw the new placed piece in
 (defun place-piece(player column rowlocs canvas)
 	(if (equal (nth column rowlocs) -1)
 		; if the column thing already equals 0
@@ -134,7 +129,7 @@
 ;;;;;;;;;;;;;; TEST WIN FUNCTIONS ;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; see if player 1 has won
+; check for 4 in a row horizontally for player 1
 (defun test-player1-win-horizontal(board)
 	; test horizontal wins for player 1
 	(let()
@@ -155,7 +150,7 @@
 	)
 )
 
-; see if player 1 has won
+; check for 4 in a row diagonally for player 1
 (defun test-player1-win-diagonal(board)
 	; test diagonal wins for player 1
 	(let()
@@ -191,6 +186,7 @@
 	)
 )
 
+; check for wins for player 1 vertically
 (defun test-player1-win-vertical(board)
 	; test vertical wins for player 1
 	(let()
@@ -212,7 +208,7 @@
 )
 
 
-; see if player 2 has won
+; same as above but for player 2
 (defun test-player2-win-horizontal(board)
 	; test horizontal wins for player 1
 	(let()
@@ -253,7 +249,6 @@
 	)
 )
 
-; see if player 2 has won
 (defun test-player2-win-diagonal(board)
 	; test diagonal wins for player 2
 	(let()
@@ -289,6 +284,8 @@
 	)
 )
 
+; use all of the above check wins functions to see if any
+; of them result in a win for either player
 (defun check-wins(board canvas)
 	;;;;;;;;; test player 1 for wins ;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -384,7 +381,7 @@
 ;;;;;;;;;;;;;;;;;;; DRAWING FUNCTIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; function to draw a line
+; simplify's Tk's line drawing function
 (defun draw-line(canvas coords)
 	(let* (
 		   (line1 (create-line canvas coords))
@@ -394,7 +391,11 @@
 	)
 )
 
+; holds each line drawings coordinates
 (defvar *lineArgs* '(0 0 0 0))
+
+; draws the lines for the outline of the connect 4 board,
+; and the two key circles for each player
 (defun draw-board(canvas)
 
 	(let (
@@ -419,7 +420,6 @@
 				(setf (nth 2 *lineArgs*) x2)
 				(setf (nth 3 *lineArgs*) y2)
 				(draw-line canvas *lineArgs*)
-				;(draw-line '(80 20 80 460))
 		)
 	)
 
@@ -453,6 +453,7 @@
 
 )
 
+; intro screen with information before main play
 (defun draw-welcomeMessage(canvas)
 	(create-text canvas 10 10 "Welcome to Connect 4!")
 	(create-text canvas 10 30 "You are the black pieces, playing against the computer (red pieces)")
@@ -475,6 +476,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;; EVENT FUNCTIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; places a piece for player one in the column they click on
+; additionally, runs player 2's turn after a column click
+; in between player 1 and two's turn, it checks for wins or draws
 (defun bind-buttonPress(canvas)
 	(bind canvas "<ButtonPress-1>"
 		(lambda (evt)
@@ -508,6 +512,10 @@
 	)
 )
 
+; for the intro screen, continue to the game if
+; the button box is clicked in
+;
+; ext:exit is clisp dependant - won't work in other variations of lisp
 (defun bind-startPress(canvas)
 	(bind canvas "<ButtonPress-1>"
 		(lambda (evt)
@@ -948,9 +956,6 @@
 		)
 	)
 
-	; generate a list of columns that aren't taken
-	;(let()
-
 	; otherwise just place a piece randomly
 	; format t "before place piece random ~%")
 	; loop until the randomly generated position doesn't result in a full column
@@ -967,6 +972,9 @@
 				(when (> *cycleCounter* 400) (return))
 		)
 	)
+	
+	; if it can't find a place without a winning move given to player one,
+	; then there's no choice but to play
 	(setf *cycleCounter* 0)
 	(when (equal (nth *player2-col* *rowLocs*) -1)
 		(loop
