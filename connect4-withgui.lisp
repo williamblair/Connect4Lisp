@@ -432,6 +432,21 @@
 
 )
 
+(defun draw-welcomeMessage(canvas)
+	(create-text canvas 10 10 "Welcome to Connect 4!")
+	(create-text canvas 10 30 "You are the black pieces, playing against the computer (red pieces)")
+	(create-text canvas 10 70 "Place pieces by clicking inside the column where you wish to play")
+	(create-text canvas 10 90 "The computer will automatically play after you (or before you if they go first)")
+	(create-text canvas 10 130 "For strategies/how the computer works, please refer to README.md")
+	
+	(create-text canvas 260 315 "Click me to Play!")
+	
+	; create continue box
+	(create-line canvas '(250 300 250 340))
+	(create-line canvas '(250 300 370 300))
+	(create-line canvas '(370 300 370 340))
+	(create-line canvas '(250 340 370 340))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -469,6 +484,28 @@
 		)
 	)
 )
+
+(defun bind-startPress(canvas)
+	(bind canvas "<ButtonPress-1>"
+		(lambda (evt)
+				(let ()
+					(setf down t)
+					(cond 
+						;((equal *player-enter* -1) (return 0))
+						((and (> (event-x evt) 250) (< (event-x evt) 370)
+						     (> (event-y evt) 300) (< (event-y evt) 340))
+						     (let ()
+								;(format t "Click event happened in good loc!~%")
+								(ext:exit) ; exit the first intro loop to the game
+							)
+						)
+						
+					)
+				)
+		)
+	)
+)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -910,17 +947,37 @@
 
 ;;;;;;;;;;;;;;;;;;; MAIN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun startScreen()
+	(with-ltk ()
+		(let(
+				(c (make-instance 'canvas :width *S_WIDTH* :height *S_HEIGHT*)) ; canvas drawing instance
+		   )
+		   
+		   (pack c)
+		   (bind-startPress c)
+		   (draw-welcomeMessage c)
+		   
+		   (format t "Please ignore the above text, it is just messages from the GUI~%")
+		)
+	)
+)
 (defun main()
+
+	(startScreen)
+
 	(with-ltk ()
 		(let (
 				(c (make-instance 'canvas :width *S_WIDTH* :height *S_HEIGHT*)) ; canvas drawing instance
 			)
 			
 			(pack c)
+
+			
 			(bind-buttonPress c) ; add an button down event listener
 			(draw-board c)
 			
-			(format t "Welcome to Connect 4!~%~%")
+			(format t "Welcome to Connect 4!~%")
+			;(format t "Please ignore the above text, it is just messages from the GUI~%")
 
 			; if player 2 was decided first to go, have them go
 			(when (equal *playerturn* 2)
